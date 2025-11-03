@@ -15,3 +15,8 @@ git push -u origin main
 git remote add origin https://github.com/vishnuawasthi121/GitHub-actions.git
 git branch -M main
 git push -u origin main
+
+
+Command to set origin 
+
+	git push --set-upstream origin poc
