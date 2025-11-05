@@ -1,4 +1,5 @@
 name: CI
+run-name: Run Tests by @${{ github.actor }}
 on: push
 jobs:
   test:
