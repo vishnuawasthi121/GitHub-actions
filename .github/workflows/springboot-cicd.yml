@@ -1,0 +1,57 @@
+# This is a GitHub Actions workflow for CI/CD of a Spring Boot application
+# Each step is explained with inline comments
+
+name: CI/CD Pipeline for Spring Boot
+
+on:
+  push:
+    branches: [ main, poc ] # Trigger on push to main or poc branches
+  pull_request:
+    branches: [ main, poc ] # Trigger on PR to main or poc branches
+  workflow_dispatch: # Allow manual trigger
+
+env:
+  JAVA_VERSION: '17' # Set Java version
+  DOCKER_IMAGE: 'your-dockerhub-username/your-app-name' # Docker image name
+  DOCKER_TAG: ${{ github.sha }} # Use commit SHA as Docker tag
+
+jobs:
+
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest # Use Ubuntu runner
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Step 1: Checkout repository code
+
+      - name: Display OS information
+        run: |
+          echo "OS Name: $(uname -s)"
+          echo "OS Version: $(uname -r)"
+        # Step 2: Show OS name and version
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4 # Step 3: Set up Java environment
+        with:
+          distribution: 'temurin' # Use Temurin distribution
+          java-version: ${{ env.JAVA_VERSION }} # Use specified Java version
+          cache: maven # Enable Maven cache
+
+      - name: Display Java version
+        run: java -version
+        # Step 4: Show Java version
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4 # Step 5: Cache Maven dependencies
+        with:
+          path: ~/.m2/repository # Path to Maven repo
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }} # Unique cache key
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Compile and Build
+        run: mvn --batch-mode clean package # Step 6: Compile and build the project
+
+      - name: Run Tests
+        run: mvn --batch-mode test # Step 7: Run unit tests
