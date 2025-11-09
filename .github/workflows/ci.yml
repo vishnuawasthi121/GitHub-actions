@@ -24,9 +24,3 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean install
-
-      - name: Package & Upload
-        run:  mkdir staging && cp target/*.jar staging
-        uses: actions/upload-artifact@v4
-        with:
-          path: staging
